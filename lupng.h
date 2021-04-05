@@ -45,9 +45,16 @@ typedef struct {
     int32_t height;
     uint8_t channels;
     uint8_t depth; /* must be 8 or 16 */
+    uint8_t isUserData;
     size_t dataSize;
     uint8_t *data;
 } LuImage;
+
+typedef enum {
+    PNG_DONE = 1,
+    PNG_OK = 0,
+    PNG_ERROR = -1,
+} LuPngErr;
 
 typedef size_t (*PngReadProc)(void *outPtr, size_t size, size_t count, void *userPtr);
 typedef size_t (*PngWriteProc)(const void *inPtr, size_t size, size_t count, void *userPtr);
@@ -82,7 +89,7 @@ typedef struct {
 } LuUserContext;
 
 /**
- * Initializes a LuUserContext to use the defaul malloc implementation.
+ * Initializes a LuUserContext to use the default malloc implementation.
  *
  * @param userCtx the LuUserContext to initialize
  */
@@ -113,7 +120,7 @@ LuImage *luImageCreate(size_t width, size_t height, uint8_t channels, uint8_t de
 void luImageRelease(LuImage *img, const LuUserContext *usrCtx);
 
 /**
- * Extracts the raw image buffer form a LuImage and releases the 
+ * Extracts the raw image buffer form a LuImage and releases the
  * then-orphaned LuImage object. This can be used if you want to use
  * the image data in your own structures.
  *
